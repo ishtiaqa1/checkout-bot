@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout Bot — AIO Competitive Assessment</title>
+  <style>
+    :root {
+      --bg:#0f1216; --panel:#171c23; --panel2:#1e242d; --border:#2a323d;
+      --text:#e6eaf0; --muted:#9aa5b4; --blue:#4a9bff; --green:#2ecc71;
+      --amber:#f5a623; --red:#ff6577;
+    }
+    * { box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body { margin:0; background:var(--bg); color:var(--text); font:14px/1.55 system-ui,"Segoe UI",sans-serif }
+    .shell { max-width:1180px; margin:auto; padding:28px 20px 60px }
+    header { border-bottom:1px solid var(--border); padding-bottom:20px }
+    h1 { margin:0 0 6px; font-size:26px }
+    h2 { margin:34px 0 12px; font-size:19px }
+    h3 { margin:0 0 8px; font-size:15px }
+    p { margin:7px 0 }
+    .muted { color:var(--muted) }
+    nav { position:sticky; top:0; z-index:2; display:flex; gap:8px; flex-wrap:wrap; padding:12px 0; background:var(--bg); border-bottom:1px solid var(--border) }
+    nav a { color:var(--text); text-decoration:none; border:1px solid var(--border); border-radius:999px; padding:6px 11px }
+    nav a:hover { border-color:var(--blue); color:var(--blue) }
+    .callout { margin:20px 0; padding:15px 17px; background:var(--panel); border-left:3px solid var(--amber); border-radius:8px }
+    .callout strong { display:block; margin-bottom:4px }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:18px 0 }
+    .stat,.card { background:var(--panel); border:1px solid var(--border); border-radius:11px; padding:15px }
+    .stat b { display:block; font-size:22px }
+    .stat span { color:var(--muted); font-size:12px }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:12px }
+    ul { margin:8px 0; padding-left:19px }
+    li { margin:6px 0 }
+    .table-wrap { overflow:auto; border:1px solid var(--border); border-radius:10px }
+    table { width:100%; min-width:760px; border-collapse:collapse; background:var(--panel) }
+    th,td { text-align:left; vertical-align:top; padding:11px 12px; border-bottom:1px solid var(--border) }
+    th { color:var(--muted); font-size:11px; letter-spacing:.05em; text-transform:uppercase; background:#131820 }
+    tr:last-child td { border-bottom:0 }
+    .good { color:var(--green) } .warn { color:var(--amber) } .bad { color:var(--red) }
+    .tag { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:2px 7px; font-size:11px; color:var(--muted) }
+    a { color:var(--blue) }
+    footer { margin-top:38px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12px }
+    @media(max-width:600px){ .shell{padding:18px 12px 40px} h1{font-size:22px} }
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <h1>Checkout Bot vs. Stellar AIO &amp; Refract</h1>
+    <p class="muted">Evidence-based architecture and speed assessment · July 16, 2026</p>
+  </header>
+
+  <nav>
+    <a href="#verdict">Verdict</a>
+    <a href="#walmart-speed">Walmart timing</a>
+    <a href="#capabilities">Capabilities</a>
+    <a href="#target-speed">Target timing</a>
+    <a href="#roadmap">Roadmap</a>
+  </nav>
+
+  <section id="verdict">
+    <div class="callout">
+      <strong>Bottom line</strong>
+      The upgrade moved this from a basic personal bot to a capable 1–5 account local AIO. Selected accounts now carry their own persistent Chrome profile, proxy, page, queue state, CVV, locks, and circuit breaker through checkout. Keeping each bot Chrome profile open and logged in preserves the verified session and greatly reduces repeat passkey/email prompts; it does not defeat a new verification challenge if Target requires one. Its clean Walmart activation and Target API-assisted paths can be competitive at personal scale. Stellar/Refract still lead in protected-drop consistency, anti-bot/OTP tooling, proxy rotation, retailer coverage, support, and proven release history.
+    </div>
+    <div class="stats">
+      <div class="stat"><b class="good">~8/10</b><span>Implemented personal-use architecture and safety</span></div>
+      <div class="stat"><b class="good">~8/10</b><span>Measured personal-use readiness; browser gate passed</span></div>
+      <div class="stat"><b class="warn">~6/10</b><span>Commercial-AIO parity at 1–5 account scale</span></div>
+      <div class="stat"><b class="good">30/30</b><span>Measured Target samples · p50 3.70s · p95 3.98s</span></div>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <h3 class="good">Where this bot is better</h3>
+        <ul>
+          <li>No recurring bot subscription.</li>
+          <li>Full source visibility and complete customization.</li>
+          <li>Simpler setup for one personal account and home IP.</li>
+          <li>Visible tiled Walmart queue windows make recovery understandable.</li>
+          <li>Good safety foundations: dry run, order guards, circuit breakers, readiness checks, watchdog, and phase telemetry.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3 class="warn">Where commercial AIOs are better</h3>
+        <ul>
+          <li>Dedicated Target Shape login and ATC-cookie workflows.</li>
+          <li>Proven account/profile/proxy routing throughout every checkout task.</li>
+          <li>Integrated/server-side monitor feeds and mature retailer modules.</li>
+          <li>Production 2FA, CAPTCHA, queue-proxy rotation, scheduling, and account matching.</li>
+          <li>Continuous updates and support when retailer behavior changes.</li>
+        </ul>
+      </article>
+    </div>
+    <div class="callout">
+      <strong>Do we have a real chance of purchasing?</strong>
+      Yes—on Target, a warm verified session reached checkout review in a measured p50 of 3.70 s and p95 of 3.98 s, so the bot is fast enough to compete for ordinary and moderately limited stock. That is not a guaranteed order: inventory can disappear, Target can re-challenge the account, payment can fail, and the 30-run gate stopped before placing an order. On Walmart queue drops, the bot has credible queue-entry mechanics, but the retailer controls queue position and no live queue-drop sample has been measured yet.
+    </div>
+  </section>
+
+  <section id="walmart-speed">
+    <h2>Walmart: stock/drop signal → queue</h2>
+    <div class="callout">
+      <strong>The metric you asked about</strong>
+      On queue drops, this bot normally does not discover ordinary “in stock” and then click a queue button. It prepositions each product on its PDP, receives a scheduled drop-window or external signal, performs one activation reload, and detects Walmart’s automatically assigned queue state.
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario / phase</th><th>Estimate</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Scheduled-window wake</td><td>Up to ~0.1 s scheduler overhead</td><td>A dedicated 100 ms scheduler runs independently from monitor sleeps; <code>activationLeadMs</code> pre-arms the window by 5 seconds by default.</td></tr>
+          <tr><td>Single activation reload</td><td>Network/device dependent</td><td>One navigation reload is issued per product under a mutex. No fixed production latency has been measured.</td></tr>
+          <tr><td>Queue recognition after UI appears</td><td>0–0.15 s polling overhead typical</td><td>The urgent watcher checks observer state and queue DOM about every 150 ms; browser rendering and network time are additional.</td></tr>
+          <tr><td><strong>Scheduled activation → recognized queue</strong></td><td><strong>Instrumented, not yet measured live</strong></td><td>The trace records <code>drop_open → activation_reload → queue_recognized</code>; current tests validate behavior with fixtures rather than a real Walmart drop.</td></tr>
+          <tr><td>External signal → recognized queue</td><td>Potentially the lowest-latency path</td><td>External alerts immediately activate the warm Walmart page, but no controlled live p50/p95 sample set exists.</td></tr>
+          <tr><td>Press &amp; Hold / PX challenge</td><td>+5–15 s or manual</td><td>Mouse-hold automation is best-effort and production PX success is unproven.</td></tr>
+          <tr><td>Queue wait</td><td>Unbounded</td><td>Controlled by Walmart; no bot can legitimately guarantee or bypass it.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted"><strong>Compared with Stellar/Refract:</strong> no controlled queue-entry benchmarks are public. This bot now has the right single/few-product mechanics—persistent verified sessions, warm pages, one-shot activation, no reload while queued, and same-page checkout. Stellar/Refract remain more consistent across larger account groups because they provide mature session tooling, monitor/checkout task separation, OTP handling, and queue/task proxy orchestration. Refract also documents queue-only proxies and proxy rotation after blocks.</p>
+  </section>
+
+  <section id="capabilities">
+    <h2>Capability comparison</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Area</th><th>This bot</th><th>Stellar AIO</th><th>Refract</th></tr></thead>
+        <tbody>
+          <tr><td>Retail coverage</td><td>Target + Walmart</td><td>70+ sites publicly claimed</td><td>Five retailers publicly listed</td></tr>
+          <tr><td>Architecture</td><td>Local Playwright/CDP with in-page API shortcuts</td><td>Commercial retailer modules and server-side monitoring</td><td>Commercial modules and in-bot monitor feeds</td></tr>
+          <tr><td>Target session / anti-bot</td><td>Persistent saved Chrome profile kept open and logged in; verification survives while Target accepts the session, but there is no dedicated Shape-cookie system</td><td>Shape v2 / extension and ATC-cookie workflow</td><td>Extension plus login/ATC-cookie workflow</td></tr>
+          <tr><td>Walmart queue</td><td>Parallel one-shot activation, 150 ms queue watch, no reload while queued, same-page checkout</td><td>Session-based queue plus monitor-to-checkout tasks</td><td>Saved sessions, forced queue/OID modes, queue proxies and rotation</td></tr>
+          <tr><td>Accounts</td><td>Up to five isolated Chrome profiles/CDP ports with end-to-end account context, page, queue, and CVV routing</td><td>Identities, sessions, task groups, account matching</td><td>Profiles, account groups, task groups, profile/account matching</td></tr>
+          <tr><td>Proxies</td><td>Named groups applied per isolated account session and used by its monitor/checkout pages</td><td>First-class monitor, checkout, account, and queue proxy workflows</td><td>Per-task, harvester, account, and queue proxy assignment/rotation</td></tr>
+          <tr><td>Parallel checkout</td><td>Selectable fan-out across 1–5 accounts with per-account locks, breakers, pages, and Walmart queue windows</td><td>One checkout task per account plus multiple monitor tasks</td><td>Many account/profile tasks with multi-SKU workflows</td></tr>
+          <tr><td>2FA / CAPTCHA</td><td>Persistent verified sessions reduce repeat prompts; new Target passkey/email challenges remain manual, with best-effort Walmart hold handling</td><td>IMAP/manual OTP and Shape/browser-extension workflows</td><td>OTP login, extension/harvester cookies, commercial anti-bot workflows</td></tr>
+          <tr><td>Evidence</td><td>52 passing unit/guard/queue/routing tests plus a persisted 30-sample real-browser Target gate: p50 3.70s, p95 3.98s</td><td>Commercial track record; no controlled public p50/p95</td><td>Commercial track record; no controlled public p50/p95</td></tr>
+          <tr><td>Maintenance</td><td>User-maintained selectors and API assumptions</td><td>Continuous vendor updates and support</td><td>Continuous vendor updates and support</td></tr>
+          <tr><td>Cost/control</td><td>No license fee; full source and customization</td><td>Commercial subscription</td><td>Commercial subscription</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>What is genuinely implemented</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Strong current features</h3>
+        <ul>
+          <li>Layered Target detection: RedSky batch API, confirmation, DOM observer, and drop sweeps.</li>
+          <li>Target cart API “blitz,” direct checkout navigation, and UI fallback.</li>
+          <li>Walmart parallel activation, join mutex, event-driven queue awareness, no reload while queued, and same-page handoff.</li>
+          <li>Separate account profile/CDP/proxy session primitives for up to five accounts.</li>
+          <li>Order deduplication, per-account lock, circuit breakers, telemetry, and safe watchdog actions.</li>
+          <li>Dry-run/manual modes and an AI stall assistant prohibited from placing orders itself.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Important limitations</h3>
+        <ul>
+          <li>There is no mature Shape-cookie harvester, automatic proxy health/rotation layer, or production paid CAPTCHA/2FA provider yet.</li>
+          <li>Tests validate guards and dry-run paths, not a contested real order.</li>
+          <li>Target cart keys and purchasable variation TCINs are captured dynamically, but retailer API/DOM changes can still force UI fallback until selectors are updated.</li>
+          <li>Restart-safe telemetry is capped at 250 runs; repeat the gate after major retailer changes.</li>
+          <li>Transient OOS attempts and passkey/email verification can still interrupt runs; invalid samples are excluded from the readiness percentiles.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="target-speed">
+    <h2>Target estimated timing</h2>
+    <div class="callout">
+      <strong>Estimates, not benchmarks</strong>
+      These ranges come from configured polling, code waits, navigation budgets, and measured browser data. The bot persists real <code>/api/test</code> traces across restarts and <code>npm run bench-target -- --loops 30 --tcin &lt;in-stock TCIN&gt;</code> enforces the gates. The current 30-sample Target set passed at p50 3.70s and p95 3.98s.
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Estimate</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Stock appearance → confirmed signal</td><td>0.4–1.5 s</td><td>800 ms drop polling averages ~400 ms, plus confirmation and network time.</td></tr>
+          <tr><td>Confirmed signal → cart</td><td>0.2–1.2 s</td><td>Best case uses Target cart API from the warmed browser session.</td></tr>
+          <tr><td>Cart → checkout ready</td><td>0.8–3.5 s</td><td>Direct checkout navigation plus DOM/product verification.</td></tr>
+          <tr><td>Checkout ready → order response</td><td>1–5 s</td><td>Payment/CVV, page hydration, place-order click, and Target response.</td></tr>
+          <tr><td><strong>Likely clean total</strong></td><td><strong>2.5–8 s</strong></td><td>Stock appearance to order response, assuming accepted API ATC and healthy session.</td></tr>
+          <tr><td>UI fallback total</td><td>8–30+ s</td><td>PDP/cart navigation, retries, anti-bot challenge, or stale session.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <h2>AIO 8–9 upgrade status</h2>
+    <div class="callout">
+      <strong>Measured ~8/10 personal-use readiness</strong>
+      The planned architecture is implemented, including end-to-end selected-account routing and restart-safe real-browser telemetry. The Target 30-sample gate passed at p50 3.70s and p95 3.98s. That supports an ~8/10 personal-use rating; commercial parity remains lower because paid anti-bot/OTP services, proxy rotation, retailer breadth, and long-term release proof are still missing.
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Status</th><th>What landed</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Walmart activation</td><td class="good">Done</td><td>Cart-clear off critical path; parallel one-shot reload; join mutex; event-driven queue watch; external alerts → activation; signal→queue telemetry; ET seconds + activationLeadMs.</td></tr>
+          <tr><td>2 · Session isolation</td><td class="good">Done</td><td>Up to five profiles/proxies route their own Target pages, Walmart queue windows, CVVs, locks, breakers, and checkout context end-to-end.</td></tr>
+          <tr><td>3 · Challenge adapters</td><td class="warn">Partial</td><td>Provider-neutral registry is live. Defaults remain manual/hold helpers rather than production paid CAPTCHA or 2FA integrations.</td></tr>
+          <tr><td>4 · Target reliability</td><td class="good">Done</td><td>Persistent verified sessions, RedSky/cart health, dynamic cart keys and variation TCINs, HTTP Date skew, and fallback alarms are implemented.</td></tr>
+          <tr><td>5 · Dry-run benchmarks</td><td class="good">Done</td><td><code>/api/test</code> persists real browser traces and <code>bench-target</code> runs them without placing orders. The 30-sample gate passed: p50 3.70s, p95 3.98s.</td></tr>
+          <tr><td>6 · Dashboard</td><td class="good">Done</td><td>Account mode panel, per-account login/CVV/readiness, signal→queue + sample/p95 stats.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h2>Highest-value remaining work</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Priority</th><th>Upgrade</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Optional paid CAPTCHA/2FA providers via adapters only</td><td>Improves protected-drop clearance while keeping the core vendor-neutral.</td></tr>
+          <tr><td>2</td><td>Add proxy health scoring/rotation and dedicated queue-proxy lifecycle</td><td>Closes the largest remaining 2–5 account reliability gap versus commercial AIOs.</td></tr>
+          <tr><td>3</td><td>Harden local API and secret handling</td><td>Improves operational safety before exposing the dashboard beyond localhost.</td></tr>
+          <tr><td>4</td><td>Repeat measured gates after major Target/Walmart site changes</td><td>Keeps the 8/10 rating tied to current browser evidence rather than stale assumptions.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>Sources: current local checkout-bot code and telemetry; public Stellar and Refract product/module documentation. Vendor capabilities do not establish independently verified success rates.</p>
+    <p>
+      <a href="https://guides.stellaraio.com/stellar/retailers/walmart-go-us">Stellar Walmart guide</a> ·
+      <a href="https://guides.stellaraio.com/stellar/retailers/targetgo">Stellar Target guide</a> ·
+      <a href="https://help.refractbot.com/modules/walmart/walmart-wednesday-drop-guide">Refract Walmart guide</a> ·
+      <a href="https://help.refractbot.com/modules/target/general-target-release-guide">Refract Target guide</a>
+    </p>
+  </footer>
+</main>
+</body>
+</html>

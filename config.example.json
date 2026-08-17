@@ -1,0 +1,111 @@
+{
+  "//": "Copy this file to config.json and edit it. config.json is gitignored. You can also manage everything from the dashboard.",
+
+  "//retailer": "Which retailer(s) to actively run: target | walmart | both. The other retailer's products stay listed but paused.",
+  "retailer": "both",
+
+  "products": [
+    {
+      "//": "A product CARD: the bot buys any Target product whose title contains at least matchThreshold of these keywords.",
+      "name": "Prismatic Evolutions ETB",
+      "keywords": ["pokemon", "prismatic", "evolutions"],
+      "matchThreshold": 0.9,
+      "maxQuantity": 1,
+      "enabled": true
+    },
+    {
+      "//": "A Walmart product: give it a walmart.com/ip/... URL (or itemId) and set retailer to walmart.",
+      "name": "Pokemon Prismatic Evolutions ETB (Walmart)",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/14273871252",
+      "maxQuantity": 1,
+      "enabled": false
+    }
+  ],
+
+  "monitor": {
+    "//": "Target's data API is blocked, so stock is always checked through the real browser. pollIntervalMs is how often each product's tab re-checks.",
+    "mode": "browser",
+    "pollIntervalMs": 120000,
+    "jitterMs": 5000,
+    "maxConcurrentChecks": 2,
+    "staggerChecks": true,
+    "dropWindow": { "enabled": true },
+    "//walmart": "Walmart PDP sweep cadence per product (ms). Walmart has no free stock API, so a dedicated tab reloads each Walmart page.",
+    "walmart": { "pollIntervalMs": 12000, "dropPollIntervalMs": 400, "queueDetectMs": 200, "burstConcurrency": 8, "activationLeadMs": 30000 }
+  },
+
+  "checkout": {
+    "//": "SAFETY: when autoPlaceOrder is false, the bot fills the cart and stops at the review screen so YOU click 'Place order'.",
+    "autoPlaceOrder": false,
+    "//dryRun": "When true, runs the whole flow but never submits payment (for testing).",
+    "dryRun": true,
+    "//targetSoldOnly": "When true, skip third-party Target Plus marketplace items and only buy items sold by Target.",
+    "targetSoldOnly": true,
+    "//dropMode": "Pokémon drop tips: fast polls, Ship-it-first checkout, qty cap, retries, clear cart.",
+    "dropMode": true,
+    "hypeMode": true,
+    "loopCheckouts": true,
+    "pokemonQuantityCap": 2,
+    "checkoutRetries": 8,
+    "clearCartBeforeCheckout": true,
+    "//walmartQueueMode": "Walmart drops: join virtual queue first; hold tab without reload while in line.",
+    "walmartQueueMode": true,
+    "//cvv": "Not stored here. Enter CVV in the dashboard top bar. Optional Remember stores it in data/local-secrets.json only.",
+    "checkoutTimeoutMs": 60000
+  },
+
+  "//checkoutProfile": "Name/address/billing autofill for Target checkout. Saved via dashboard Profile section. Never put full card numbers here.",
+  "checkoutProfile": {
+    "fullName": "",
+    "phone": "",
+    "email": "",
+    "shipping": {
+      "line1": "",
+      "line2": "",
+      "city": "",
+      "state": "",
+      "postalCode": "",
+      "country": "US"
+    },
+    "billingSameAsShipping": true,
+    "billing": {
+      "line1": "",
+      "line2": "",
+      "city": "",
+      "state": "",
+      "postalCode": "",
+      "country": "US"
+    },
+    "cardLast4": ""
+  },
+
+  "//accountMode": "single = shared ./browser-data Chrome. multi = up to 5 isolated profiles (browser-data/<id>).",
+  "accountMode": "single",
+  "accountStrategy": "first",
+  "accountFanOut": 1,
+  "//accounts": "Optional. Example multi: [{\"id\":\"tgt-1\",\"label\":\"Target main\",\"retailer\":\"target\",\"proxyGroup\":\"res1\",\"maxOrders\":2}]",
+  "accounts": [],
+  "//proxyGroups": "Named proxies. Credentials can also come from PROXY_<GROUP>_USER / PROXY_<GROUP>_PASS env vars.",
+  "proxyGroups": {},
+  "challenges": {
+    "captcha": { "provider": "manual" },
+    "hold": { "provider": "walmartHold" },
+    "twoFactor": { "provider": "manual" }
+  },
+
+  "notifications": {
+    "desktop": true,
+    "sound": true
+  },
+
+  "aiAssistant": {
+    "//": "Watches running checkouts and auto-recovers stalls (dismiss popups, retry, reload). Heuristics are free; add an OpenAI key (or set OPENAI_API_KEY env) for smarter recovery on unusual pages.",
+    "enabled": true,
+    "openaiApiKey": "",
+    "model": "gpt-4o-mini",
+    "stallSeconds": 18,
+    "maxRecoveriesPerCheckout": 2,
+    "maxStepsPerRecovery": 4
+  }
+}

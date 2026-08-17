@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>PX mock</title>
+<style>
+  #px-captcha { padding: 40px; text-align: center; font-family: sans-serif; }
+  #px-captcha button {
+    padding: 20px 40px; font-size: 16px; cursor: pointer;
+    background: #0071ce; color: #fff; border: 2px solid #ffc220; border-radius: 8px;
+  }
+  .cleared { color: green; font-size: 24px; }
+</style>
+</head>
+<body>
+  <div id="px-captcha">
+    <p>Press & Hold to confirm you are a human (and not a bot).</p>
+    <button id="holdBtn" type="button">Press &amp; Hold</button>
+  </div>
+  <script>
+    const btn = document.getElementById("holdBtn");
+    const wrap = document.getElementById("px-captcha");
+    let downAt = 0;
+    btn.addEventListener("mousedown", () => { downAt = Date.now(); });
+    btn.addEventListener("mouseup", () => {
+      if (downAt && Date.now() - downAt >= 3500) {
+        wrap.innerHTML = '<p class="cleared">Human verified — PX cleared</p>';
+      } else {
+        downAt = 0;
+      }
+    });
+    btn.addEventListener("mouseleave", () => { downAt = 0; });
+  </script>
+</body>
+</html>

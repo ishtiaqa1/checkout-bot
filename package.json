@@ -1,0 +1,39 @@
+{
+  "name": "checkout-bot",
+  "version": "1.1.0",
+  "description": "Personal stock monitor and auto-checkout for Target and Walmart (Pokemon drops, etc.).",
+  "type": "module",
+  "bin": {
+    "checkout-bot": "src/index.js"
+  },
+  "scripts": {
+    "ui": "node src/index.js ui",
+    "start": "node src/index.js ui",
+    "login": "node src/index.js login",
+    "watch": "node src/index.js run",
+    "test-stock": "node src/index.js check",
+    "self-test": "node scripts/self-test.mjs",
+    "test-instock": "node scripts/test-instock-dryrun.mjs",
+    "test-blitz": "node scripts/test-blitz.mjs",
+    "test-ai": "node scripts/test-ai-assistant.mjs",
+    "test-walmart": "node scripts/test-walmart.mjs",
+    "test-alerts": "node scripts/test-external-alerts.mjs",
+    "test-aio-speed": "node scripts/test-aio-speed.mjs",
+    "test-aio-guards": "node scripts/test-aio-queue-guard.mjs",
+    "test-account-routing": "node scripts/test-account-routing.mjs",
+    "test-walmart-queue": "node scripts/test-walmart-queue-latency.mjs",
+    "bench-target": "node scripts/bench-target-dryrun.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "discord.js": "^14.26.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.2",
+    "node-notifier": "^10.0.1",
+    "playwright": "^1.48.0"
+  },
+  "license": "MIT"
+}

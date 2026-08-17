@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Checkout Bot — Target &amp; Walmart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="styles.css?v=12" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span id="merchantIcon" class="merchant-icon bullseye" data-retailer="target" aria-hidden="true"></span>
+        <div>
+          <h1 id="brandTitle">Checkout Bot</h1>
+          <p id="brandSub" class="sub">Target &amp; Walmart stock monitor &amp; auto-checkout</p>
+        </div>
+      </div>
+      <div class="controls" aria-label="Bot controls">
+        <div class="control-group">
+          <label class="retailer-header" title="Switch active retailer (applies live while running)">
+            <span class="retailer-header-label">Store</span>
+            <select id="retailerSwitch" class="retailer-select">
+              <option value="target">Target</option>
+              <option value="walmart">Walmart</option>
+              <option value="both">Both</option>
+            </select>
+          </label>
+          <label class="retailer-header" title="Active account for sign-in / CVV / readiness (multi mode)">
+            <span class="retailer-header-label">Account</span>
+            <select id="accountSelect" class="retailer-select">
+              <option value="local">Local</option>
+            </select>
+          </label>
+          <button id="loginBtn" class="btn btn-ghost">Sign in</button>
+          <span class="cvv-wrap" title="Card security code. Optional: check Remember CVV to keep it on this PC only (not in config.json).">
+            <span id="cvvDot" class="cvv-dot"></span>
+            <label class="cvv-label" for="cvvInput">CVV</label>
+            <input id="cvvInput" class="cvv-input" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="•••" aria-label="Card security code" />
+            <label class="check remember-cvv" title="Stores CVV in data/local-secrets.json on this PC only (gitignored)">
+              <input id="rememberCvv" type="checkbox" />
+              Remember
+            </label>
+          </span>
+        </div>
+        <div class="control-group control-group-run">
+          <span id="statePill" class="pill pill-stopped" role="status">Stopped</span>
+          <button id="checkAllBtn" class="btn btn-ghost" disabled title="Check every active product now">Check all</button>
+          <button id="startBtn" class="btn btn-primary">Start monitoring</button>
+          <button id="cancelBtn" class="btn btn-danger" disabled>Cancel checkout</button>
+          <button id="stopBtn" class="btn btn-danger" disabled>Stop monitoring</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- Live status board -->
+      <section class="card span-2">
+        <div class="card-head status-head">
+          <h2>Checkout status</h2>
+          <button id="readinessBtn" class="btn btn-tiny btn-ghost">Check readiness</button>
+        </div>
+        <div class="status-summary">
+          <div class="status-summary-item">
+            <span class="summary-label">Mode</span>
+            <strong id="modeBadge">Loading…</strong>
+          </div>
+          <div class="status-summary-item">
+            <span class="summary-label">Readiness</span>
+            <strong id="readinessStatus">Not checked</strong>
+            <span id="readinessDetail" class="summary-detail">Run a check before a drop</span>
+          </div>
+          <div class="status-summary-item">
+            <span class="summary-label">Speed</span>
+            <strong id="latencyStatus">No checkout data</strong>
+            <span id="latencyDetail" class="summary-detail">Recent signal-to-checkout latency</span>
+          </div>
+          <div class="status-summary-item">
+            <span class="summary-label">Queue entry</span>
+            <strong id="queueLatencyStatus">No queue data</strong>
+            <span class="summary-detail">Walmart signal→queue</span>
+          </div>
+        </div>
+        <div id="board" class="board">
+          <p class="empty">No products yet. Add one below, then press Start.</p>
+        </div>
+      </section>
+
+      <!-- Product card creator (Target) -->
+      <section class="card" id="targetAddSection">
+        <div class="card-head"><h2>Add Target product</h2></div>
+        <label>Card name
+          <input id="cardName" type="text" placeholder="e.g. Prismatic Evolutions ETB" />
+        </label>
+        <label style="margin-top:12px">Keywords
+          <div id="chips" class="chips"></div>
+          <input id="kwInput" type="text" placeholder="type a keyword and press Enter (e.g. pokemon)" />
+        </label>
+        <label style="margin-top:12px">Match threshold: <strong id="threshVal">90%</strong>
+          <input id="thresh" type="range" min="50" max="100" step="5" value="90" />
+          <span class="muted">A product matches if its title contains at least this % of your keywords.</span>
+        </label>
+        <div class="row end">
+          <button id="previewBtn" class="btn btn-ghost">Preview matches</button>
+          <button id="addCardBtn" class="btn btn-primary">Add product card</button>
+        </div>
+        <div id="previewResults" class="results"></div>
+      </section>
+
+      <!-- Add Walmart product -->
+      <section class="card" id="walmartAddSection">
+        <div class="card-head"><h2>Add Walmart product</h2></div>
+        <p class="muted">Paste a walmart.com product link. At drop time the bot refreshes each PDP, handles <strong>Press &amp; Hold</strong> bot checks, and joins Walmart's <strong>virtual queue</strong> — then holds the tab open (no reload) while you're in line.</p>
+        <label>Product name (optional)
+          <input id="wmName" type="text" placeholder="e.g. Pokemon ETB" />
+        </label>
+        <label style="margin-top:12px">Walmart URL
+          <input id="wmUrl" type="url" placeholder="https://www.walmart.com/ip/..." style="width:100%" />
+        </label>
+        <label style="margin-top:12px">Max price (optional)
+          <input id="wmMaxPrice" type="number" min="0" step="0.01" placeholder="e.g. 54.99 — skip if scalper price" style="width:100%" />
+        </label>
+        <label style="margin-top:12px">Quantity to buy
+          <input id="wmQty" type="number" min="1" max="5" value="1" placeholder="After you clear the queue" style="width:100%" />
+        </label>
+        <div class="row end">
+          <button id="addWmBtn" class="btn btn-primary">Add Walmart product</button>
+        </div>
+      </section>
+
+      <!-- Watchlist -->
+      <section class="card span-2" id="watchlistSection">
+        <div class="card-head">
+          <h2>Watchlist</h2>
+          <div class="wl-head-actions">
+            <button type="button" id="armAllBtn" class="btn btn-tiny btn-ghost" title="Arm all products for monitoring">Arm all</button>
+            <button type="button" id="disarmAllBtn" class="btn btn-tiny btn-ghost" title="Disarm all — monitor nothing until you arm a few">Disarm all</button>
+          </div>
+        </div>
+        <p class="muted wl-arm-hint">Only <strong>Armed</strong> products are monitored and warmed in Chrome. Click a product name to rename it (auto-saves). Disarm extras so drops stay fast.</p>
+        <p id="watchlistPausedNote" class="watchlist-paused-note" style="display:none"></p>
+        <div id="watchlistTargetGroup" class="watchlist-group">
+          <h3 class="wl-group-title"><span class="retailer-badge tg">Target</span> Products</h3>
+          <div id="watchlistTarget" class="watchlist"></div>
+        </div>
+        <div id="watchlistWalmartGroup" class="watchlist-group">
+          <h3 class="wl-group-title"><span class="retailer-badge wm">Walmart</span> Products</h3>
+          <div id="watchlistWalmart" class="watchlist"></div>
+        </div>
+      </section>
+
+      <!-- Target favorites -->
+      <section class="card span-2" id="targetFavSection">
+        <div class="card-head"><h2>Your Target favorites</h2></div>
+        <p class="muted">Uses the same Chrome session as stock checks. Click Load my favorites — if Target asks to sign in, use the utility tab that opens (it stays open; the bot waits up to 10 minutes).</p>
+        <div class="row end">
+          <button id="addAllFavBtn" class="btn btn-ghost" disabled>Add all to watchlist</button>
+          <button id="loadFavBtn" class="btn btn-primary">Load my favorites</button>
+        </div>
+        <div id="favResults" class="results"></div>
+      </section>
+
+      <!-- Walmart favorites -->
+      <section class="card span-2" id="walmartFavSection">
+        <div class="card-head"><h2>Your Walmart favorites</h2></div>
+        <p class="muted">Loads items from your Walmart <strong>Favorites / My Lists</strong> using the same Chrome session. Sign in if prompted — the tab stays open. Then use <strong>Add all to watchlist</strong> (products auto-save).</p>
+        <div class="row end">
+          <button id="addAllWmFavBtn" class="btn btn-ghost" disabled>Add all to watchlist</button>
+          <button id="loadWmFavBtn" class="btn btn-primary">Load my favorites</button>
+        </div>
+        <div id="wmFavResults" class="results"></div>
+      </section>
+
+      <!-- Checkout profile (saved on this PC) -->
+      <section class="card span-2" id="profileSection">
+        <div class="card-head"><h2>Checkout profile</h2></div>
+        <p class="muted">Saved name, address, and billing so Target checkout can autofill instead of only the CVV. Card number stays on your Target account — never store the full card here.</p>
+        <div class="profile-grid">
+          <label>Full name
+            <input id="profileFullName" type="text" autocomplete="name" placeholder="First Last" />
+          </label>
+          <label>Phone
+            <input id="profilePhone" type="tel" autocomplete="tel" placeholder="5551234567" />
+          </label>
+          <label>Email
+            <input id="profileEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+          </label>
+          <label>Card last 4 (optional)
+            <input id="profileCardLast4" type="text" inputmode="numeric" maxlength="4" placeholder="1234" />
+          </label>
+        </div>
+        <h3 class="wl-group-title" style="margin-top:16px">Shipping address</h3>
+        <div class="profile-grid">
+          <label class="span-2">Address line 1
+            <input id="shipLine1" type="text" autocomplete="address-line1" placeholder="123 Main St" />
+          </label>
+          <label class="span-2">Address line 2
+            <input id="shipLine2" type="text" autocomplete="address-line2" placeholder="Apt, suite (optional)" />
+          </label>
+          <label>City
+            <input id="shipCity" type="text" autocomplete="address-level2" />
+          </label>
+          <label>State
+            <input id="shipState" type="text" autocomplete="address-level1" maxlength="2" placeholder="NY" />
+          </label>
+          <label>ZIP
+            <input id="shipZip" type="text" autocomplete="postal-code" placeholder="10001" />
+          </label>
+        </div>
+        <label class="check" style="margin-top:12px">
+          <input id="billingSameAsShipping" type="checkbox" checked />
+          Billing address same as shipping
+        </label>
+        <div id="billingFields" class="profile-grid" style="display:none;margin-top:12px">
+          <label class="span-2">Billing line 1
+            <input id="billLine1" type="text" autocomplete="billing address-line1" />
+          </label>
+          <label class="span-2">Billing line 2
+            <input id="billLine2" type="text" autocomplete="billing address-line2" />
+          </label>
+          <label>City
+            <input id="billCity" type="text" autocomplete="billing address-level2" />
+          </label>
+          <label>State
+            <input id="billState" type="text" maxlength="2" autocomplete="billing address-level1" />
+          </label>
+          <label>ZIP
+            <input id="billZip" type="text" autocomplete="billing postal-code" />
+          </label>
+        </div>
+        <div class="row end" style="margin-top:14px">
+          <span id="profileHint" class="muted"></span>
+          <button id="saveProfileBtn" class="btn btn-primary" type="button">Save profile</button>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="card span-2 settings-card">
+        <details>
+          <summary>
+            <span><strong>Advanced settings</strong><small>Monitoring, checkout behavior, alerts, and payment options</small></span>
+            <span class="summary-open">Show settings</span>
+          </summary>
+        <div class="settings-grid">
+          <fieldset>
+            <legend>Accounts (1–5)</legend>
+            <label>Account mode
+              <select id="accountMode">
+                <option value="single">Single (shared Chrome profile)</option>
+                <option value="multi">Multi (isolated profiles, max 5)</option>
+              </select>
+            </label>
+            <label>Routing strategy
+              <select id="accountStrategy">
+                <option value="first">First eligible</option>
+                <option value="least_orders">Least orders</option>
+                <option value="round_robin">Round robin</option>
+                <option value="sticky">Sticky per product</option>
+              </select>
+            </label>
+            <label>Fan-out per stock hit <input id="accountFanOut" class="inline-num" type="number" min="1" max="5" value="1" /></label>
+            <p class="muted">Multi mode launches a separate Chrome profile/CDP port per enabled account. Leave accounts empty for the default local session.</p>
+            <label>Accounts JSON (advanced)
+              <textarea id="accountsJson" rows="4" placeholder='[{"id":"tgt-1","label":"Target main","retailer":"target","proxyGroup":"res1","maxOrders":2}]' style="width:100%;font-family:ui-monospace,Consolas,monospace;font-size:11px"></textarea>
+            </label>
+            <label>Proxy groups JSON
+              <textarea id="proxyGroupsJson" rows="3" placeholder='{"res1":{"server":"http://host:port","username":"","password":""}}' style="width:100%;font-family:ui-monospace,Consolas,monospace;font-size:11px"></textarea>
+            </label>
+            <div id="accountsPanel" class="accounts-panel"></div>
+            <div id="accountsStatus" class="muted"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Retailer</legend>
+            <p class="muted">Use the <strong>Store</strong> dropdown above to select what is visible and monitored. Products from other stores remain saved but hidden.</p>
+          </fieldset>
+          <fieldset>
+            <legend>Stock detection (recommended: external)</legend>
+            <label>Monitor mode
+              <select id="monitorMode">
+                <option value="fast">Fast API monitor (recommended — free, no Discord)</option>
+                <option value="external">External alerts only (webhook/Discord)</option>
+                <option value="hybrid">Fast API + browser backup</option>
+                <option value="browser">Browser only (legacy — slow)</option>
+              </select>
+            </label>
+            <p class="muted"><strong>Can't Follow Discord channels?</strong> Use <strong>Fast API monitor</strong> — one Target tab checks all 18 products every ~1 second during drops. Auto-checkout, no manual clicking.</p>
+            <ol class="muted setup-steps">
+              <li>Create a <strong>personal Discord server</strong> (free)</li>
+              <li>In Pokémon Restocks and Alerts, open the Target restock channel → click <strong>Follow</strong> (bell) → choose your server</li>
+              <li>Create a bot at <a href="https://discord.com/developers/applications" target="_blank">discord.com/developers</a> → enable <strong>Message Content Intent</strong> → invite bot to <em>your</em> server</li>
+              <li>Enable Developer Mode in Discord → right-click the <strong>mirrored channel in YOUR server</strong> → Copy Channel ID</li>
+              <li>Paste token + channel ID below → Save → Stop → Start</li>
+            </ol>
+            <label class="check"><input id="discordBridge" type="checkbox" /> Discord bridge (free cook group alerts)</label>
+            <label>Discord bot token <input id="discordToken" type="password" placeholder="or set DISCORD_BOT_TOKEN env" style="width:100%" /></label>
+            <label>Discord channel IDs <input id="discordChannels" type="text" placeholder="comma-separated channel IDs" style="width:100%" /></label>
+            <label>Webhook URL <input id="webhookUrl" type="text" readonly style="width:100%" /></label>
+            <label>Webhook secret <input id="webhookSecret" type="password" placeholder="optional" style="width:100%" /></label>
+            <p class="muted"><strong>External</strong> mode: alerts from your cook group → bot starts checkout in ~1–3 sec. Browser never scrapes Target stock pages.</p>
+            <p class="muted">TrackaLack has no API — use <strong>Follow Channel</strong> from Pokémon Restocks and Alerts (free) or PikaNotify Discord (paid).</p>
+          </fieldset>
+          <fieldset>
+            <legend>When an item is in stock</legend>
+            <label>Action
+              <select id="stockAction">
+                <option value="buy">Buy automatically</option>
+                <option value="cart">Add to cart, I'll place the order</option>
+                <option value="practice">Practice run (never buys)</option>
+              </select>
+            </label>
+            <label>Check every <input id="pollSeconds" class="inline-num" type="number" min="30" step="1" /> seconds</label>
+            <p class="muted">Poll interval only applies to <strong>browser/hybrid</strong> modes. External mode ignores this — stock comes from alerts.</p>
+            <label class="check"><input id="targetSoldOnly" type="checkbox" /> Only buy first-party (Target / Walmart sold)</label>
+            <label class="check"><input id="dropMode" type="checkbox" checked /> Pokémon drop mode (fast checkout, Ship it first, qty cap 2)</label>
+            <label class="check" title="Like Refract Hype Product — max speed checkout during drops"><input id="hypeMode" type="checkbox" checked /> Hype mode (max checkout aggression)</label>
+            <label class="check" title="AIO Speed Upgrade — API-first ATC, warm checkout tab, readiness gate, latency telemetry"><input id="performanceMode" type="checkbox" checked /> Performance mode (API-first / AIO-style)</label>
+            <label class="check" title="Like Refract Loop Checkouts — keep buying while item stays in stock"><input id="loopCheckouts" type="checkbox" checked /> Loop checkouts (re-buy while in stock)</label>
+            <label class="check" title="Target Pokémon limit is 2 per item online — buys max qty every order"><input id="maxOutQuantity" type="checkbox" checked /> Max qty per order (2)</label>
+          </fieldset>
+          <fieldset>
+            <legend>AI assistant</legend>
+            <label class="check" title="Watches every running checkout. If it stalls (popup, error page, dead button), the assistant samples the page and takes a safe recovery step — dismiss the dialog, click try-again, reload, or jump to checkout. Never places an order unless Buy automatically is on."><input id="aiAssistant" type="checkbox" checked /> Auto-recover stalled checkouts</label>
+            <label>OpenAI API key (optional) <input id="aiApiKey" type="password" placeholder="sk-... — smarter recovery; heuristics work without it" autocomplete="off" style="width:100%" /></label>
+            <p class="muted">Built-in heuristics handle common Target hiccups for free. Adding an OpenAI key lets the assistant reason about unusual pages. The key is stored in config.json on this PC only.</p>
+          </fieldset>
+          <fieldset>
+            <legend>Drop windows</legend>
+            <p class="muted">Drop windows speed up <strong>browser backup</strong> polling. With external mode, your PikaNotify/Discord alerts are already sub-second — this is a safety net only.</p>
+          </fieldset>
+          <fieldset>
+            <legend>Payment</legend>
+            <p class="muted">Fill the <strong>Checkout profile</strong> section above for name/address autofill. Enter CVV in the top bar (optional Remember on this PC). Card number stays on your Target/Walmart account.</p>
+          </fieldset>
+          <fieldset>
+            <legend>Notifications</legend>
+            <label class="check"><input id="notifyDesktop" type="checkbox" /> Desktop pop-ups</label>
+            <label class="check"><input id="notifySound" type="checkbox" /> Sound</label>
+          </fieldset>
+        </div>
+        <div class="row end">
+          <span id="saveHint" class="muted"></span>
+          <button id="saveBtn" class="btn btn-primary">Save settings</button>
+        </div>
+        </details>
+      </section>
+
+      <!-- Activity log -->
+      <section class="card span-2">
+        <div class="card-head">
+          <h2>Activity</h2>
+          <div class="log-controls">
+            <span id="connectionStatus" class="connection-state">Connecting…</span>
+            <label class="check compact-check"><input id="autoScrollLog" type="checkbox" checked /> Follow</label>
+            <button id="clearLog" class="btn btn-tiny btn-ghost">Clear</button>
+          </div>
+        </div>
+        <div id="logBox" class="logbox" role="log" aria-live="polite" aria-relevant="additions"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="app.js?v=12" type="module"></script>
+  </body>
+</html>

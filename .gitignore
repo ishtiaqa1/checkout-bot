@@ -1,0 +1,9 @@
+node_modules/
+.env
+config.json
+browser-data/
+screenshots/
+data/*
+!data/.gitkeep
+*.log
+.DS_Store
